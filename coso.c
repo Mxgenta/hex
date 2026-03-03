@@ -1,6 +1,3 @@
-//navegar entre archivos de un directorio
-//y mostrar su contenido en hexadecimal
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -13,9 +10,7 @@
 #include <dirent.h>
 #include <menu.h>
 
-//hacer entorno grafico
 
-//leer directorio
 char *leeDir(char *dir){
     DIR *dirP = opendir(dir);
     struct dirent *d_dir;
@@ -39,9 +34,11 @@ char *leeDir(char *dir){
         int ptr=0;
         while ((d_dir = readdir(dirP))!=NULL)
         {
-            strcpy(&espacioDirectorios[ptr], d_dir->d_name);
-            ptr += strlen(d_dir->d_name);
-            espacioDirectorios[ptr] = '\r';
+            char *currItem = (char *)calloc(strlen(d_dir->d_name)+1, sizeof(char));
+            strcat(currItem, d_dir->d_name);
+            strcat(currItem, "\n");
+            strcpy(&espacioDirectorios[ptr], currItem);
+            ptr += (strlen(currItem));
         }
         espacioDirectorios[ptr] = '\0';
     }
@@ -50,34 +47,29 @@ char *leeDir(char *dir){
     return espacioDirectorios;
 }
 
-//funciones del hex editor
-
-
 int main(int argc, char const *argv[]){
-    
-    char *opt_char[] = {
-        "opcion1",
-        "opcion2",
-        "opcion3",
-        (char *)NULL,
-    };
-    int c;
+    char currDir[512]; 
+    int i;
+    int nArchivos = 0;
 
-    //elementos del menu
-    ITEM **opciones;
-    MENU *menu;
-    WINDOW *menu_window;
+    getcwd(currDir, sizeof(currDir));
+    char *strArchivos = leeDir(currDir);
 
-    //inicializar pantalla con modo raw
-    initscr();
-    raw();
-    keypad(stdscr, TRUE);
-    noecho();
+    int tamArrArchivos = strlen(strArchivos);
+    char *opcionesArchivos[99];
+    char *currItem = (char *)calloc(99, sizeof(char));
 
+    while(*strArchivos != '\0'){
+        if(*strArchivos != '\n'){
+            strcpy(currItem, strArchivos);
+        }else{
+            ++strArchivos;
+            ++nArchivos;
+        }
+        //opcionesArchivos[nArchivos] = malloc(strlen(currItem)+1);
+    }
 
-
-
-	endwin();
+    printf("%i\n", nArchivos);
 
     return 0;
 }
