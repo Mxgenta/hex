@@ -17,6 +17,7 @@ char *leeDir(char *dir){
 
     char *espacioDirectorios = NULL;
     int tamanototal = 0;
+    int nDirectorios = 0;
     
     if (dirP == NULL){
         printf("error al abrir directorio");
@@ -25,8 +26,10 @@ char *leeDir(char *dir){
         {
             //asignar memoria por nombre de archivo/directorio
             int tamDirectorio = sizeof(char) * (strlen(d_dir->d_name) + 1);
+            ++nDirectorios;
             tamanototal = tamanototal + tamDirectorio;
         }
+
         espacioDirectorios = (char *)malloc(tamanototal);
 
         closedir(dirP);
@@ -51,25 +54,54 @@ int main(int argc, char const *argv[]){
     char currDir[512]; 
     int i;
     int nArchivos = 0;
+    int tamPalabra = 0;
 
+    //leer directorio actual
     getcwd(currDir, sizeof(currDir));
     char *strArchivos = leeDir(currDir);
 
+    //revisar el string que regreso la funcion leeDir
     int tamArrArchivos = strlen(strArchivos);
-    char *opcionesArchivos[99];
-    char *currItem = (char *)calloc(99, sizeof(char));
 
-    while(*strArchivos != '\0'){
-        if(*strArchivos != '\n'){
-            strcpy(currItem, strArchivos);
-        }else{
-            ++strArchivos;
+    for(i=0;i<tamArrArchivos;i++){
+        if(strArchivos[i] == '\n'){
             ++nArchivos;
         }
-        //opcionesArchivos[nArchivos] = malloc(strlen(currItem)+1);
     }
 
-    printf("%i\n", nArchivos);
+    int tamanosDirectorios[nArchivos];
+
+    int n=0, a=0;
+    for(i=0;i<tamArrArchivos;i++){
+        if(strArchivos[i] != '\n'){
+            a++;
+            tamanosDirectorios[n] = a;
+        }else{
+            ++n;
+            a=0;
+        }
+    }
+    char *opcionesArchivos[nArchivos];
+
+    //asignar a opcionesArchivos
+    char strt[99];
+    for(int i = 0; i < nArchivos; i++){
+        opcionesArchivos[i] = calloc(tamanosDirectorios[i], sizeof(char));
+        for(i=0;i<tamArrArchivos;i++){
+        if(strArchivos[i] != '\n'){
+            a++;
+            tamanosDirectorios[n] = a;
+        }else{
+            ++n;
+            a=0;
+        }
+    }
+    }
+
+
+    for (int i = 0; i < nArchivos; i++)
+        printf("%s\n", opcionesArchivos[i]);
+    return 0;
 
     return 0;
 }
